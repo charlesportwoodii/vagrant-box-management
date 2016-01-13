@@ -14,8 +14,10 @@ The following document outlines how to update Vagrant boxes and package them for
     vagrant up --provider virtualbox
     ```
     > Note that these boxes connect to a bridge adapter - so if you have more than 1 active outbound network adapter, Vagrant will need to specify it.
-    
-3. Use the fullowing script to update the box.
+
+3. Add any packages you need to install and pre-configure.
+4. Update the boxes guest additions. You can either download the files directory from [VirtualBox's website](http://download.virtualbox.org/virtualbox/), or use a plugin like [vagrant-vbguest](https://github.com/dotless-de/vagrant-vbguest/).
+5. Use the fullowing script to update the box.
 
     ```
     curl https://raw.githubusercontent.com/charlesportwoodii/vagrant-box-management/master/scripts/update.sh | sudo sh
@@ -26,8 +28,8 @@ The following document outlines how to update Vagrant boxes and package them for
     
     > After running this script, it is very important that you don't run any other commands, as doing so could change the ssh key or add information to the history.
 
-4. Exit the box and run ```vagrant halt``` to stop the box.
-5. Copy and compress the ``vmdk``` image. This is important and Vagrant Boxes can get rather large after updating packages
+6. Exit the box and run ```vagrant halt``` to stop the box.
+7. Copy and compress the ``vmdk``` image. This is important and Vagrant Boxes can get rather large after updating packages
 
     ```
     # Convert the box to VDI for compression
@@ -45,14 +47,14 @@ The following document outlines how to update Vagrant boxes and package them for
     
     > Cloning the box can confuse Virtualbox and prevent the ```package``` command from running. After cloning the box, go to File > Virtual Machine Manager, and release any boxes that are in an errored state, then go into the generated virtual machine and verify the generated ```vmdk`` disk is present and attached.
     
-6. Modify ```Vagrantfile``` with the following arguments to automatically configure port forwarding and bridged networking
+8. Modify ```Vagrantfile``` with the following arguments to automatically configure port forwarding and bridged networking
 
     ```
     config.vm.network "forwarded_port", guest: 80, host: 8080
     config.vm.network "public_network"
     ```
 
-7. Package the box
+9. Package the box
 
     ```
     vagrant package --base <generated_box_name> --vagrantfile ./Vagrantfile --output <file>.box
